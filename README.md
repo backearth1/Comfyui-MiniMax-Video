@@ -27,7 +27,6 @@ git clone https://github.com/yourusername/ComfyUI-MiniMax-Video.git
 pip install -r requirements.txt
 ```
 
-3. Configure your MiniMax API key in `config.ini`
 
 ## Node Parameters
 
@@ -37,7 +36,10 @@ pip install -r requirements.txt
 | api_key | MiniMax API Key | STRING | - |
 | api_url | API Base URL | ["https://api.minimax.chat/v1"] | "https://api.minimax.chat/v1" |
 
-### Image to Video Node
+https://api.minimax.chat/v1 for user in China
+https://api.minimaxi.chat/v1 for user in other country
+
+### Image  or Text to Video Node
 | Parameter | Description | Type | Default |
 |-----------|-------------|------|---------|
 | client | MiniMax API Client | MINIMAX_CLIENT | - |
@@ -46,11 +48,13 @@ pip install -r requirements.txt
 | model | Video Model | ["video-01", "video-01-live2d"] | "video-01" |
 | prompt_optimizer | Enable Prompt Optimization | BOOLEAN | true |
 
+
 ## Tips
 1. Ensure you have a valid MiniMax API key
 2. Video generation may take some time
 3. Generated videos are saved in ComfyUI's output directory
 4. Use clear frontal images for best results
+5. if you don't add any image, the node will support text to video
 
 ## Troubleshooting
 
@@ -94,7 +98,7 @@ git clone https://github.com/yourusername/ComfyUI-MiniMax-Video.git
 pip install -r requirements.txt
 ```
 
-3. 在 `config.ini` 中配置 MiniMax API 密钥
+
 
 ## 节点参数说明
 
@@ -103,6 +107,9 @@ pip install -r requirements.txt
 |------|------|------|--------|
 | api_key | MiniMax API 密钥 | STRING | - |
 | api_url | API 基础地址 | ["https://api.minimax.chat/v1"] | "https://api.minimax.chat/v1" |
+
+中国用户 https://api.minimax.chat/v1 
+其他地区用户 https://api.minimaxi.chat/v1 
 
 ### 图像转视频节点
 | 参数 | 说明 | 类型 | 默认值 |
@@ -118,6 +125,7 @@ pip install -r requirements.txt
 2. 视频生成可能需要一定时间
 3. 生成的视频会保存在 ComfyUI 的输出目录中
 4. 建议使用清晰的正面图片以获得最佳效果
+5. 如果未添加任何图片，节点将支持文本转视频
 
 ## 常见问题
 
