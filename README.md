@@ -5,10 +5,11 @@
 # English
 
 ## Overview
-A ComfyUI extension that integrates MiniMax AI's image-to-video generation capabilities, allowing users to easily convert static images into dynamic videos.
+A ComfyUI extension that integrates MiniMax AI's image-to-video and text-to-video generation capabilities, allowing users to easily convert static images into dynamic videos.
 
 ## Features
 - Image to video conversion
+- Text to video conversion
 - Support for multiple video generation models
 - Real-time video preview
 - Custom prompt optimization
@@ -36,7 +37,7 @@ pip install -r requirements.txt
 | api_key | MiniMax API Key | STRING | - |
 | api_url | API Base URL | ["https://api.minimax.chat/v1"] | "https://api.minimax.chat/v1" |
 
-https://api.minimax.chat/v1 for user in China
+https://api.minimax.chat/v1 for user in China；
 https://api.minimaxi.chat/v1 for user in other country
 
 ### Image  or Text to Video Node
@@ -53,8 +54,9 @@ https://api.minimaxi.chat/v1 for user in other country
 1. Ensure you have a valid MiniMax API key
 2. Video generation may take some time
 3. Generated videos are saved in ComfyUI's output directory
-4. Use clear frontal images for best results
-5. if you don't add any image, the node will support text to video
+4. Video files are named as "time+trace_id"
+5. Use clear frontal images for best results
+6. if you don't add any image, the node will support text to video
 
 ## Troubleshooting
 
@@ -76,10 +78,11 @@ A: Recommendations:
 # 中文
 
 ## 概述
-ComfyUI MiniMax Video 扩展集成了 MiniMax AI 的图像转视频生成功能，让用户能够轻松地将静态图像转换为动态视频。
+ComfyUI MiniMax Video 扩展集成了 MiniMax AI 的图像转视频和文本转视频生成功能，让用户能够轻松地将静态图像转换为动态视频。
 
 ## 功能特点
-- 图片转视频转换
+- 图片转视频
+- 文本转视频
 - 支持多种视频生成模型
 - 实时视频预览
 - 自定义提示词优化
@@ -108,7 +111,7 @@ pip install -r requirements.txt
 | api_key | MiniMax API 密钥 | STRING | - |
 | api_url | API 基础地址 | ["https://api.minimax.chat/v1"] | "https://api.minimax.chat/v1" |
 
-中国用户 https://api.minimax.chat/v1 
+中国用户 https://api.minimax.chat/v1 ；
 其他地区用户 https://api.minimaxi.chat/v1 
 
 ### 图像转视频节点
@@ -124,8 +127,9 @@ pip install -r requirements.txt
 1. 确保拥有有效的 MiniMax API 密钥
 2. 视频生成可能需要一定时间
 3. 生成的视频会保存在 ComfyUI 的输出目录中
-4. 建议使用清晰的正面图片以获得最佳效果
-5. 如果未添加任何图片，节点将支持文本转视频
+4. 视频文件会以“时间+trace_id"命名
+5. 建议使用清晰的正面图片以获得最佳效果
+6. 如果未添加任何图片，节点将支持文本转视频
 
 ## 常见问题
 
