@@ -1,0 +1,45 @@
+{
+  "1": {
+    "inputs": {
+      "model": "video-01",
+      "prompt": "she is walking",
+      "prompt_optimizer": true,
+      "api_key": [
+        "3",
+        0
+      ],
+      "api_url": [
+        "3",
+        1
+      ],
+      "first_frame_image": [
+        "4",
+        0
+      ]
+    },
+    "class_type": "MiniMaxImage2Video"
+  },
+  "2": {
+    "inputs": {
+      "video_url": [
+        "1",
+        0
+      ]
+    },
+    "class_type": "MiniMaxPreviewVideo"
+  },
+  "3": {
+    "inputs": {
+      "api_key": "",
+      "api_url": "https://api.minimax.chat/v1"
+    },
+    "class_type": "MiniMaxAIAPIClient"
+  },
+  "4": {
+    "inputs": {
+      "image": "微信图片_20241127001712.png",
+      "upload": "image"
+    },
+    "class_type": "LoadImage"
+  }
+}
