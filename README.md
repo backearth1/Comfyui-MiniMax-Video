@@ -19,7 +19,7 @@ A ComfyUI extension that integrates MiniMax AI's image-to-video generation capab
 1. Clone this repository to your ComfyUI custom_nodes directory:
 ```bash
 cd custom_nodes
-git clone https://github.com/yourusername/ComfyUI-MiniMax-Video.git
+git clone https://github.com/backearth1/ComfyUI-MiniMax-Video.git
 ```
 
 2. Install required dependencies:
@@ -90,7 +90,7 @@ ComfyUI MiniMax Video 扩展集成了 MiniMax AI 的图像转视频生成功能�
 1. 克隆仓库到 ComfyUI 的 custom_nodes 目录：
 ```bash
 cd custom_nodes
-git clone https://github.com/yourusername/ComfyUI-MiniMax-Video.git
+git clone https://github.com/backearth1/ComfyUI-MiniMax-Video.git
 ```
 
 2. 安装依赖：
