@@ -83,6 +83,7 @@ A: Recommendations:
 
 ## 概述
 ComfyUI MiniMax Video 扩展集成了 MiniMax AI 的图像转视频和文本转视频生成功能，让用户能够轻松地将静态图像转换为动态视频。
+![alt text](image.png)
 
 ## 功能特点
 - 图片转视频
