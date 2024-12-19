@@ -12,13 +12,13 @@ import urllib3
 class MiniMaxPreviewVideo:
     def __init__(self):
         print("初始化 MiniMaxPreviewVideo 节点")
-        pass
+        self.video_urls = []
     
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "video_url": ("STRING", {"forceInput": True}),
+                "video_url": ("STRING", {"forceInput": True, "multiline": True}),
             }
         }
     
@@ -28,7 +28,27 @@ class MiniMaxPreviewVideo:
     RETURN_TYPES = ()
     
     def run(self, video_url):
-        return {"ui": {"video_url": [video_url]}}
+        print("\n=== MiniMaxPreviewVideo 节点执行 ===")
+        # 处理输入的视频URL
+        if isinstance(video_url, (list, tuple)):
+            urls = list(video_url)
+        else:
+            # 如果是字符串，尝试解析是否为JSON数组
+            try:
+                import json
+                urls = json.loads(video_url) if isinstance(video_url, str) else [video_url]
+            except:
+                urls = [video_url]
+        
+        print(f"接收到 {len(urls)} 个视频URL:")
+        for i, url in enumerate(urls):
+            print(f"视频 #{i+1}: {url}")
+        
+        # 更新视频URL列表
+        self.video_urls = urls
+        
+        # 返回UI更新信息
+        return {"ui": {"video_url": urls}}
 
 class MiniMaxAIAPIClient:
     def __init__(self):
@@ -76,6 +96,14 @@ class MiniMaxImage2Video:
                     "display": "Prompt"
                 }),
                 "prompt_optimizer": ("BOOLEAN", {"default": True}),
+                "watermark": (["yes", "no"], {"default": "yes"}),
+                "concurrent_tasks": ("INT", {
+                    "default": 1,
+                    "min": 1,
+                    "max": 5,
+                    "step": 1,
+                    "display": "并发生成数量"
+                }),
             },
             "optional": {
                 "first_frame_image": ("IMAGE",),
@@ -131,6 +159,10 @@ class MiniMaxImage2Video:
             "model": model,
             "prompt_optimizer": self.prompt_optimizer,
         }
+        
+        # 根据watermark选项添加水印参数
+        if self.watermark == "yes":
+            payload["watermark"] = "hailuo"
         
         # 如果有图像，则添加到 payload
         if base64_image is not None:
@@ -247,59 +279,107 @@ class MiniMaxImage2Video:
             print(f"下载失败: {str(e)}")
             raise
 
-    def generate_video(self, api_key, api_url, model, prompt, prompt_optimizer, first_frame_image=None):
+    def generate_video(self, api_key, api_url, model, prompt, prompt_optimizer, watermark="yes", concurrent_tasks=1, first_frame_image=None):
         try:
+            print(f"\n=== 开始视频生成任务 ===")
+            print(f"并发任务数: {concurrent_tasks}")
             self.prompt_optimizer = prompt_optimizer
+            self.watermark = watermark  # 保存水印选项
+            video_urls = []
+            tasks_info = []
             
-            # 生成新的文件名格式：MM{时间}_{trace_id}.mp4
-            current_time = time.strftime("%m%d%H%M")
-            
-            # 初始化输出路径（此时还没有 trace_id）
-            self.output_path = f"MM{current_time}"
-            
-            print(f"开始生成视频，输出路径将基于: {self.output_path}")
-            
+            # 首先发起所有请求
             base64_image = None
             if first_frame_image is not None:
+                print("检测到输入图像，进行编码...")
                 base64_image = self.encode_image(first_frame_image)
             
-            task_id = self.invoke_video_generation(api_key, api_url, prompt, model, base64_image)
+            current_time = time.strftime("%m%d%H%M")
+            print(f"\n--- 开始发起并发请求 ---")
             
-            # 更新完整的输出路径（现在有了 trace_id）
-            self.output_path = f"MM{current_time}_{self.trace_id}.mp4"
-            print(f"更新后的输出路径: {os.path.join(self.output_dir, self.output_path)}")
-            
-            progress_count = 0
-            while True:
-                file_id, status = self.query_video_generation(api_key, api_url, task_id)
+            for i in range(concurrent_tasks):
+                if i > 0:
+                    print(f"等待5秒后发起下一个请求...")
+                    time.sleep(5)
                 
-                if status == "Success" and file_id:
-                    video_url = self.get_video_url(api_key, api_url, file_id)
-                    video_path = self.fetch_video_result(api_key, api_url, file_id, self.output_path)
-                    print("---------------生成成功---------------")
-                    print(f"视频已保存到: {video_path}")
-                    print(f"视频URL: {video_url}")
+                try:
+                    print(f"\n开始发起任务 #{i+1}/{concurrent_tasks}")
+                    task_id = self.invoke_video_generation(api_key, api_url, prompt, model, base64_image)
+                    trace_id = getattr(self, 'trace_id', 'unknown')
                     
-                    return {
-                        "ui": {"video_url": [video_url]},
-                        "result": (video_url,)
-                    }
-                elif status in ["Fail", "Unknown"]:
-                    print("---------------生成失败---------------")
-                    raise Exception(f"视频生成失败: {status}")
+                    tasks_info.append({
+                        'index': i + 1,
+                        'task_id': task_id,
+                        'trace_id': trace_id,
+                        'status': 'Queueing',
+                        'output_path': f"MM{current_time}_{i+1}_{trace_id}.mp4",
+                        'start_time': time.time()
+                    })
+                    
+                    print(f"任务 #{i+1} 请求成功:")
+                    print(f"- Task ID: {task_id}")
+                    print(f"- Trace ID: {trace_id}")
+                    print(f"- Output Path: {tasks_info[-1]['output_path']}")
+                    
+                except Exception as e:
+                    print(f"任务 #{i+1} 发起失败: {str(e)}")
+                    raise
+
+            print(f"\n--- 开始监控任务状态 ---")
+            while tasks_info:
+                for task in tasks_info[:]:
+                    try:
+                        file_id, status = self.query_video_generation(api_key, api_url, task['task_id'])
+                        task['status'] = status
+                        
+                        elapsed_time = int(time.time() - task['start_time'])
+                        print(f"\n任务 #{task['index']} 状态更新:")
+                        print(f"- Status: {status}")
+                        print(f"- 已用时: {elapsed_time}秒")
+                        
+                        if status == "Success" and file_id:
+                            print(f"\n任务 #{task['index']} 生成成功!")
+                            video_url = self.get_video_url(api_key, api_url, file_id)
+                            video_path = self.fetch_video_result(api_key, api_url, file_id, task['output_path'])
+                            video_urls.append(video_url)
+                            print(f"- Video URL: {video_url}")
+                            print(f"- Saved to: {video_path}")
+                            
+                            print(f"\n正在更新预览界面...")
+                            print(f"当前视频URLs: {video_urls}")
+                            result = self.update_preview(video_urls)
+                            print(f"预览更新结果: {result}")
+                            
+                            tasks_info.remove(task)
+                        elif status in ["Fail", "Unknown"]:
+                            print(f"\n任务 #{task['index']} 失败!")
+                            tasks_info.remove(task)
+                            raise Exception(f"视频生成失败 (Task #{task['index']})")
+                            
+                    except Exception as e:
+                        print(f"\n任务 #{task['index']} 处理异常: {str(e)}")
+                        tasks_info.remove(task)
+                        raise
                 
-                progress_count += 1
-                if status == "Queueing":
-                    progress_msg = f"排队中... ({progress_count * 20}秒)"
-                else:
-                    progress_msg = f"生成中... ({progress_count * 20}秒)"
-                
-                print(progress_msg)
-                time.sleep(20)
+                if tasks_info:
+                    print("\n等待20秒后继续查询...")
+                    time.sleep(20)
+            
+            print(f"\n=== 所有 {concurrent_tasks} 个视频生成完成 ===")
+            print(f"最终视频URLs: {video_urls}")
+            return {
+                "ui": {"video_url": video_urls},
+                "result": (video_urls,)
+            }
                 
         except Exception as e:
-            print(f"发生错误: {str(e)}")
+            print(f"\n=== 发生错误 ===")
+            print(f"错误详情: {str(e)}")
             raise e
+
+    def update_preview(self, video_urls):
+        """实时更新预览"""
+        return {"ui": {"video_url": video_urls}}
 
     def get_video_url(self, api_key, api_url, file_id):
         """获取视频下载链接"""
