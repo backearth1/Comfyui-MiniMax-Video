@@ -37,8 +37,8 @@ pip install -r requirements.txt
 | api_key | MiniMax API Key | STRING | - |
 | api_url | API Base URL | ["https://api.minimax.chat/v1"] | "https://api.minimax.chat/v1" |
 
-https://api.minimax.chat/v1 for user in China；
-https://api.minimaxi.chat/v1 for user in other country
+https://api.minimax.chat/v1 for users in China；
+https://api.minimaxi.chat/v1 for users in other countries
 
 ### Image  or Text to Video Node
 | Parameter | Description | Type | Default |
@@ -57,6 +57,8 @@ https://api.minimaxi.chat/v1 for user in other country
 4. Video files are named as "time+trace_id"
 5. Use clear frontal images for best results
 6. if you don't add any image, the node will support text to video
+7. if you want to add watermark, please check "Add Watermark" option in the node parameters
+8. if you open concurrent requests, please pay attention to the account configured with enough RPM
 
 ## Troubleshooting
 
@@ -130,6 +132,8 @@ pip install -r requirements.txt
 4. 视频文件会以“时间+trace_id"命名
 5. 建议使用清晰的正面图片以获得最佳效果
 6. 如果未添加任何图片，节点将支持文本转视频
+7. 如果需要添加水印，请在节点参数中勾选“添加水印”选项
+8. 如果开启并发请求，请注意账号配置了足够的RPM
 
 ## 常见问题
 
