@@ -76,7 +76,7 @@ export function addVideoPreview(nodeType, options = {}) {
             container.style.overflow = 'hidden';
             
             const title = document.createElement('div');
-            title.textContent = `任务 #${index + 1}`;
+            title.textContent = `Task #${index + 1}`;
             title.style.padding = '5px 10px';
             title.style.color = '#fff';
             title.style.fontSize = '14px';
