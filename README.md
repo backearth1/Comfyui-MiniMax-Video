@@ -7,6 +7,8 @@
 ## Overview
 A ComfyUI extension that integrates MiniMax AI's image-to-video and text-to-video generation capabilities, allowing users to easily convert static images into dynamic videos.
 
+![alt text](image.png)
+
 ## Features
 - Image to video conversion
 - Text to video conversion
