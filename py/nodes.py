@@ -408,11 +408,136 @@ class MiniMaxImage2Video:
         result = response.json()
         return result['file']['download_url']
 
+class ImageToPrompt:
+    def __init__(self):
+        self.last_result = None
+        self.last_inputs = None
+        print("初始化 ImageToPrompt 节点")
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "api_key": ("API_KEY",),
+                "api_url": ("API_URL",),
+                "model": (["MiniMax-Text-01", "abab6.5s-chat"],),
+                "image": ("IMAGE",),
+                "LLM_prompt": ("STRING", {
+                    "default": "You will receive an image (which will be the first frame of the video) and user input (which describes what the user wants to generate based on this image). \n"
+                              "Your task is to combine their information to construct a video description that will be used to generate a video.\n\n"
+                              "- Do NOT add any content that is not in the image or user input!!!\n"
+                              "- Do NOT add any camera movement that is not in the image or user input!!!\n"
+                              "- If the user input does not mention any movement for the main subject, add subtle motions based on the current actions of the subject in the image to avoid stillness in the video.\n"
+                              "- The user input may be empty, meaning the user did not provide any information. Please follow the above rules to generate a video description.\n"
+                              "- Please return the description in English and in 150 words.\n\n"
+                              "User Input:\n",
+                    "multiline": True,
+                    "display": "LLM Prompt"
+                }),
+            }
+        }
+
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("prompt",)
+    FUNCTION = "generate_prompt"
+    CATEGORY = "minimax"
+
+    def generate_prompt(self, api_key, api_url, model, image, LLM_prompt):
+        print("\n=== ImageToPrompt 节点执行 ===")
+        
+        # 检查输入是否与上次相同
+        current_inputs = (
+            api_key, 
+            api_url, 
+            model, 
+            hash(image.cpu().numpy().tobytes()),  # 使用 numpy 数组的哈希值
+            LLM_prompt
+        )
+        
+        if self.last_inputs == current_inputs and self.last_result is not None:
+            print("使用缓存的结果")
+            return self.last_result
+
+        # 确保 API URL 包含完整的端点路径
+        if not api_url.endswith('/chat/completions'):
+            api_url = f"{api_url.rstrip('/')}/chat/completions"
+        
+        # 将 Tensor 转换为 PIL Image
+        if isinstance(image, torch.Tensor):
+            if len(image.shape) == 4:
+                image = image[0]  # 移除批次维度
+            image = image.permute(1, 2, 0)  # 将通道维度移到最后
+            image = (image * 255).clamp(0, 255).byte().cpu().numpy()  # 转换为 numpy 数组
+            if image.shape[2] == 1:  # 如果是单通道图像
+                image = image.squeeze(axis=2)  # 移除单通道维度
+                mode = "L"  # 灰度图像模式
+            else:
+                mode = "RGB"  # 彩色图像模式
+            image = Image.fromarray(image, mode)
+
+        # 将图像编码为 base64
+        buffered = io.BytesIO()
+        image.save(buffered, format="PNG")
+        base64_image = base64.b64encode(buffered.getvalue()).decode('utf-8')
+
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {api_key}"
+        }
+
+        payload = {
+            "model": model,
+            "messages": [
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": LLM_prompt
+                        },
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": f"data:image/png;base64,{base64_image}"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "max_tokens": 300
+        }
+
+        try:
+            print(f"请求的 API URL: {api_url}")
+            response = requests.post(api_url, headers=headers, json=payload)
+            print(f"API 响应状态码: {response.status_code}")
+            print(f"API 响应内容: {response.text}")
+
+            # 检查响应状态码
+            if response.status_code != 200:
+                raise Exception(f"API 请求失败，状态码: {response.status_code}")
+
+            response_json = response.json()
+            prompt = response_json.get('choices', [{}])[0].get('message', {}).get('content', '')
+            print(f"生成的文本提示: {prompt}")
+            
+            # 缓存结果
+            self.last_inputs = current_inputs
+            self.last_result = (prompt,)
+            return self.last_result
+        except requests.exceptions.JSONDecodeError as e:
+            print(f"JSON 解析错误: {str(e)}")
+            raise
+        except Exception as e:
+            print(f"API 请求失败: {str(e)}")
+            raise
+
 # 导出节点映射
 NODE_CLASS_MAPPINGS = {
     "MiniMaxPreviewVideo": MiniMaxPreviewVideo,
     "MiniMaxAIAPIClient": MiniMaxAIAPIClient,
     "MiniMaxImage2Video": MiniMaxImage2Video,
+    "ImageToPrompt": ImageToPrompt,
 }
 
 # 导出节点显示名称映射
@@ -420,4 +545,5 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "MiniMaxPreviewVideo": "MiniMax Preview Video",
     "MiniMaxAIAPIClient": "MiniMax API Client",
     "MiniMaxImage2Video": "MiniMax Image to Video",
+    "ImageToPrompt": "Image to Prompt",
 }
