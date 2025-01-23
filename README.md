@@ -58,7 +58,7 @@ https://api.minimaxi.chat/v1 for users in other countries
 | client | MiniMax API Client | MINIMAX_CLIENT | - |
 | image | Input Image | IMAGE | - |
 | prompt | Generation Prompt | STRING | "" |
-| model | Video Model | ["video-01", "video-01-live2d","S2V-"] | "video-01" |
+| model | Video Model | ["video-01", "video-01-live2d","S2V-01"] | "video-01" |
 | prompt_optimizer | Enable Prompt Optimization | BOOLEAN | true |
 
 ## Example Workflows
