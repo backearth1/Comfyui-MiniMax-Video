@@ -48,7 +48,7 @@ https://api.minimaxi.chat/v1 for users in other countries
 | image | Input Image | IMAGE | - |
 | api_key | MiniMax API Key | API_KEY | - |
 | api_url | API Base URL | API_URL | - |
-| model | LLM Model | ["MiniMax-Text-01", "abab7-chat-preview", "abab6.5s-chat"] | "MiniMax-Text-01" |
+| model | LLM Model | ["MiniMax-Text-01",  "abab6.5s-chat"] | "MiniMax-Text-01" |
 | VLM_prompt | Custom VLM Prompt | STRING | Default prompt template |
 | temperature | Model Temperature | FLOAT | 0.1 |
 
@@ -58,7 +58,7 @@ https://api.minimaxi.chat/v1 for users in other countries
 | client | MiniMax API Client | MINIMAX_CLIENT | - |
 | image | Input Image | IMAGE | - |
 | prompt | Generation Prompt | STRING | "" |
-| model | Video Model | ["video-01", "video-01-live2d"] | "video-01" |
+| model | Video Model | ["video-01", "video-01-live2d","S2V-"] | "video-01" |
 | prompt_optimizer | Enable Prompt Optimization | BOOLEAN | true |
 
 ## Example Workflows
@@ -73,6 +73,8 @@ https://api.minimaxi.chat/v1 for users in other countries
 ![alt text](image_to_prompt.png)
 ### AI fit clothes workflow
 ![alt text](fitting.png)
+### subject reference
+![alt text](S2V.png)
 
 ## Tips
 1. Ensure you have a valid MiniMax API key
@@ -149,7 +151,7 @@ pip install -r requirements.txt
 | image | 输入图片 | IMAGE | - |
 | api_key | MiniMax API 密钥 | API_KEY | - |
 | api_url | API 基础地址 | API_URL | - |
-| model | 语言模型 | ["MiniMax-Text-01", "abab7-chat-preview", "abab6.5s-chat"] | "MiniMax-Text-01" |
+| model | 语言模型 | ["MiniMax-Text-01",  "abab6.5s-chat"] | "MiniMax-Text-01" |
 | VLM_prompt | 自定义 VLM 提示词 | STRING | 默认提示词模板 |
 | temperature | 模型温度 | FLOAT | 0.1 |
 
@@ -159,9 +161,9 @@ pip install -r requirements.txt
 | client | MiniMax API 客户端 | MINIMAX_CLIENT | - |
 | image | 输入图片 | IMAGE | - |
 | prompt | 生成提示词 | STRING | "" |
-| model | 视频模型 | ["video-01", "video-01-live2d"] | "video-01" |
+| model | 视频模型 | ["video-01", "video-01-live2d","S2V-01"] | "video-01" |
 | prompt_optimizer | 启用提示词优化 | BOOLEAN | true |
-
+| watermark | 添加水印 | BOOLEAN | false |
 ## 示例工作流
 
 ### 基础图像转视频
@@ -174,6 +176,8 @@ pip install -r requirements.txt
 ![alt text](image_to_prompt.png)
 ### AI试衣服工作流
 ![alt text](fitting.png)
+### 人脸主题参考
+![alt text](S2V.png)
 
 ## 使用提示
 1. 确保拥有有效的 MiniMax API 密钥
