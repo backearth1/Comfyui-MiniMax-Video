@@ -89,7 +89,7 @@ class MiniMaxImage2Video:
             "required": {
                 "api_key": ("API_KEY",),
                 "api_url": ("API_URL",),
-                "model": (["video-01", "video-01-live2d", "S2V-01"],),  # 添加 S2V-01 模型
+                "model": (["I2V-01","T2V-01","I2V-01-Director","T2V-01-Director", "I2V-01-live", "S2V-01"],),  # 添加 S2V-01 模型
                 "prompt": ("STRING", {
                     "default": "", 
                     "multiline": True,
@@ -106,7 +106,7 @@ class MiniMaxImage2Video:
                 }),
             },
             "optional": {
-                "first_frame_image": ("IMAGE",),  # 用于 video-01 和 video-01-live2d
+                "first_frame_image": ("IMAGE",),  # 用于 I2V-01 , I2V-01-live和I2V-01-Director
                 "subject_reference_image": ("IMAGE",),  # 新增：用于 S2V-01 的主体参考图
             }
         }
