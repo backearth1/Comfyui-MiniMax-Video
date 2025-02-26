@@ -58,7 +58,7 @@ https://api.minimaxi.chat/v1 for users in other countries
 | client | MiniMax API Client | MINIMAX_CLIENT | - |
 | image | Input Image | IMAGE | - |
 | prompt | Generation Prompt | STRING | "" |
-| model | Video Model | ["video-01", "video-01-live2d","S2V-01"] | "video-01" |
+| model | Video Model | [T2V-01-Director,I2V-01-Director,S2V-01,I2V-01-live,I2V-01,T2V-01] | "I2V-01" |
 | prompt_optimizer | Enable Prompt Optimization | BOOLEAN | true |
 
 ## Example Workflows
@@ -161,7 +161,7 @@ pip install -r requirements.txt
 | client | MiniMax API 客户端 | MINIMAX_CLIENT | - |
 | image | 输入图片 | IMAGE | - |
 | prompt | 生成提示词 | STRING | "" |
-| model | 视频模型 | ["video-01", "video-01-live2d","S2V-01"] | "video-01" |
+| model | 视频模型 | [T2V-01-Director,I2V-01-Director,S2V-01,I2V-01-live,I2V-01,T2V-01] | "I2V-01" |
 | prompt_optimizer | 启用提示词优化 | BOOLEAN | true |
 | watermark | 添加水印 | BOOLEAN | false |
 ## 示例工作流
