@@ -532,18 +532,114 @@ class ImageToPrompt:
             print(f"API 请求失败: {str(e)}")
             raise
 
-# 导出节点映射
+class MiniMaxImageGenerator:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "api_key": ("API_KEY",),
+                "api_url": ("API_URL",),
+                "prompt": ("STRING", {
+                    "default": "", 
+                    "multiline": True,
+                    "display": "Prompt"
+                }),
+                "model": (["image-xy01", "image-01"], {"default": "image-xy01"}),
+                "aspect_ratio": (["1:1", "16:9", "4:3", "3:2", "2:3", "3:4", "9:16", "21:9"], {"default": "16:9"}),
+                "n": ("INT", {"default": 1, "min": 1, "max": 9, "step": 1}),
+                "prompt_optimizer": ("BOOLEAN", {"default": True})
+            },
+            "hidden": {
+                "seed": ("INT", {"default": -1, "min": -1, "max": 2147483647})
+            }
+        }
+    
+    RETURN_TYPES = ("IMAGE",)
+    RETURN_NAMES = ("images",)
+    FUNCTION = "generate_image"
+    CATEGORY = "minimax"
+
+    def generate_image(self, api_key, api_url, prompt, model, aspect_ratio, n, prompt_optimizer, seed=-1):
+        # 构建完整的图像生成API URL
+        image_api_url = f"{api_url.rstrip('/')}/image_generation"
+        
+        payload = {
+            "model": model,
+            "prompt": prompt,
+            "aspect_ratio": aspect_ratio,
+            "response_format": "url",
+            "n": n,
+            "prompt_optimizer": prompt_optimizer
+        }
+        
+        # 只有当种子值不为-1时，才添加到payload中
+        if seed != -1:
+            payload["seed"] = seed
+            
+        headers = {
+            'Authorization': f'Bearer {api_key}',
+            'Content-Type': 'application/json'
+        }
+        
+        print(f"正在请求MiniMax API生成图像，提示词: {prompt}")
+        
+        try:
+            response = requests.post(image_api_url, headers=headers, data=json.dumps(payload))
+            response_data = json.loads(response.text)
+            
+            print(f"Trace-Id: {response.headers.get('Trace-Id')}")
+            
+            if 'data' in response_data and 'image_urls' in response_data['data']:
+                images = []
+                
+                for i, image_url in enumerate(response_data['data']['image_urls']):
+                    # 解码URL中的转义字符
+                    decoded_url = image_url.encode('utf-8').decode('unicode_escape')
+                    print(f"获取图像 {i+1} URL: {decoded_url}")
+                    
+                    # 下载图像
+                    img_response = requests.get(decoded_url)
+                    img = Image.open(io.BytesIO(img_response.content))
+                    
+                    # 转换为ComfyUI可用的格式
+                    img_tensor = torch.from_numpy(np.array(img).astype(np.float32) / 255.0)
+                    # 确保图像格式为[H, W, 3]
+                    if len(img_tensor.shape) == 2:  # 灰度图
+                        img_tensor = img_tensor.unsqueeze(-1).repeat(1, 1, 3)
+                    images.append(img_tensor)
+                
+                # 打包图像为批次
+                if images:
+                    batch_images = torch.stack(images)
+                    print(f"成功生成 {len(images)} 张图像")
+                    return (batch_images,)
+                else:
+                    raise Exception("无法获取图像")
+            else:
+                error_msg = response_data.get('message', '未知错误')
+                error_code = response_data.get('code', '未知代码')
+                raise Exception(f"API错误: {error_code} - {error_msg}")
+        
+        except Exception as e:
+            print(f"请求处理过程中出错: {str(e)}")
+            # 返回空图像，防止节点崩溃
+            empty_image = torch.zeros((1, 64, 64, 3))
+            return (empty_image,)
+
+# 更新节点映射
 NODE_CLASS_MAPPINGS = {
     "MiniMaxPreviewVideo": MiniMaxPreviewVideo,
     "MiniMaxAIAPIClient": MiniMaxAIAPIClient,
     "MiniMaxImage2Video": MiniMaxImage2Video,
     "ImageToPrompt": ImageToPrompt,
+    "MiniMaxImageGenerator": MiniMaxImageGenerator,  # 添加新节点
 }
 
-# 导出节点显示名称映射
+# 更新节点显示名称映射
 NODE_DISPLAY_NAME_MAPPINGS = {
     "MiniMaxPreviewVideo": "MiniMax Preview Video",
     "MiniMaxAIAPIClient": "MiniMax API Client",
     "MiniMaxImage2Video": "MiniMax Image to Video",
     "ImageToPrompt": "Image to Prompt",
+    "MiniMaxImageGenerator": "MiniMax Image Generator",  # 添加新节点显示名称
 }
