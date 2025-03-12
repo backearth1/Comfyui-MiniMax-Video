@@ -8,6 +8,7 @@ from .py.nodes import (
     MiniMaxImage2Video,
     MiniMaxPreviewVideo,
     ImageToPrompt,
+    MiniMaxImageGenerator,
 )
 
 NODE_CLASS_MAPPINGS = {
@@ -15,6 +16,7 @@ NODE_CLASS_MAPPINGS = {
     "MiniMaxImage2Video": MiniMaxImage2Video,
     "MiniMaxPreviewVideo": MiniMaxPreviewVideo,
     "ImageToPrompt": ImageToPrompt,
+    "MiniMaxImageGenerator": MiniMaxImageGenerator,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -22,6 +24,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "MiniMaxImage2Video": "MiniMax Image to Video",
     "MiniMaxPreviewVideo": "MiniMax Preview Video",
     "ImageToPrompt": "Image to Prompt",
+    "MiniMaxImageGenerator": "MiniMax Image Generator",
 }
 
 WEB_DIRECTORY = os.path.join(os.path.dirname(os.path.realpath(__file__)), "web")

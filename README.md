@@ -5,7 +5,7 @@
 # English
 
 ## Overview
-A ComfyUI extension that integrates MiniMax AI's image-to-video, text-to-video, and image-to-prompt generation capabilities, allowing users to easily convert static images into dynamic videos with optimized prompts.
+A ComfyUI extension that integrates MiniMax AI's image-to-video, text-to-video, image-to-prompt generation capabilities, and image generation capabilities, allowing users to easily convert static images into dynamic videos with optimized prompts and generate high-quality images.
 
 ![alt text](image.png)
 
@@ -13,6 +13,7 @@ A ComfyUI extension that integrates MiniMax AI's image-to-video, text-to-video, 
 - Image to video conversion
 - Text to video conversion
 - Image to prompt generation
+- AI image generation
 - Support for multiple video generation models
 - Real-time video preview
 - Custom prompt optimization
@@ -61,6 +62,17 @@ https://api.minimaxi.chat/v1 for users in other countries
 | model | Video Model | [T2V-01-Director,I2V-01-Director,S2V-01,I2V-01-live,I2V-01,T2V-01] | "I2V-01" |
 | prompt_optimizer | Enable Prompt Optimization | BOOLEAN | true |
 
+### MiniMax Image Generator Node
+| Parameter | Description | Type | Default |
+|-----------|-------------|------|---------|
+| api_key | MiniMax API Key | API_KEY | - |
+| api_url | API Base URL | API_URL | - |
+| prompt | Generation Prompt | STRING | "" |
+| model | Image Model | ["image-xy01", "image-01"] | "image-xy01" |
+| aspect_ratio | Image Aspect Ratio | ["1:1", "16:9", "4:3", "3:2", "2:3", "3:4", "9:16", "21:9"] | "16:9" |
+| n | Number of Images to Generate | INT | 1 |
+| prompt_optimizer | Enable Prompt Optimization | BOOLEAN | true |
+
 ## Example Workflows
 
 ### Basic Image to Video
@@ -71,10 +83,18 @@ https://api.minimaxi.chat/v1 for users in other countries
 
 ### Image to Video with Prompt Optimization
 ![alt text](image_to_prompt.png)
+
 ### AI fit clothes workflow
 ![alt text](fitting.png)
-### subject reference
+
+### Subject reference
 ![alt text](S2V.png)
+
+### Image Generation
+![alt text](text2image2video.png)
+- Connect to MiniMax API Client
+- Use MiniMax Image Generator node with a descriptive prompt
+- Connect the output to an image preview node or use in other workflows
 
 ## Tips
 1. Ensure you have a valid MiniMax API key
@@ -86,6 +106,7 @@ https://api.minimaxi.chat/v1 for users in other countries
 7. If you want to add watermark, please check "Add Watermark" option in the node parameters
 8. If you open concurrent requests, please pay attention to the account configured with enough RPM
 9. The Image to Prompt node can help generate better video descriptions
+10. For image generation, detailed prompts yield better results
 
 ## Troubleshooting
 
@@ -108,7 +129,7 @@ A: Recommendations:
 # 中文
 
 ## 概述
-ComfyUI MiniMax Video 扩展集成了 MiniMax AI 的图像转视频、文本转视频和图像转提示词生成功能，让用户能够轻松地将静态图像转换为动态视频。
+ComfyUI MiniMax Video 扩展集成了 MiniMax AI 的图像转视频、文本转视频、图像转提示词生成功能和图像生成功能，让用户能够轻松地将静态图像转换为动态视频，并生成高质量图像。
 
 ![alt text](image.png)
 
@@ -116,6 +137,7 @@ ComfyUI MiniMax Video 扩展集成了 MiniMax AI 的图像转视频、文本转�
 - 图片转视频
 - 文本转视频
 - 图像转提示词
+- AI 图像生成
 - 支持多种视频生成模型
 - 实时视频预览
 - 自定义提示词优化
@@ -164,6 +186,18 @@ pip install -r requirements.txt
 | model | 视频模型 | [T2V-01-Director,I2V-01-Director,S2V-01,I2V-01-live,I2V-01,T2V-01] | "I2V-01" |
 | prompt_optimizer | 启用提示词优化 | BOOLEAN | true |
 | watermark | 添加水印 | BOOLEAN | false |
+
+### MiniMax 图像生成节点
+| 参数 | 说明 | 类型 | 默认值 |
+|------|------|------|--------|
+| api_key | MiniMax API 密钥 | API_KEY | - |
+| api_url | API 基础地址 | API_URL | - |
+| prompt | 生成提示词 | STRING | "" |
+| model | 图像模型 | ["image-xy01", "image-01"] | "image-xy01" |
+| aspect_ratio | 图像宽高比 | ["1:1", "16:9", "4:3", "3:2", "2:3", "3:4", "9:16", "21:9"] | "16:9" |
+| n | 生成图像数量 | INT | 1 |
+| prompt_optimizer | 启用提示词优化 | BOOLEAN | true |
+
 ## 示例工作流
 
 ### 基础图像转视频
@@ -174,10 +208,18 @@ pip install -r requirements.txt
 
 ### 带提示词优化的图像转视频
 ![alt text](image_to_prompt.png)
+
 ### AI试衣服工作流
 ![alt text](fitting.png)
+
 ### 人脸主题参考
 ![alt text](S2V.png)
+
+### 图像生成
+![alt text](text2image2video.png)
+- 连接 MiniMax API 客户端
+- 使用 MiniMax 图像生成节点并输入描述性提示词
+- 将输出连接到图像预览节点或用于其他工作流
 
 ## 使用提示
 1. 确保拥有有效的 MiniMax API 密钥
@@ -189,6 +231,7 @@ pip install -r requirements.txt
 7. 如果需要添加水印，请在节点参数中勾选"添加水印"选项
 8. 如果开启并发请求，请注意账号配置了足够的RPM
 9. 图像转提示词节点可以帮助生成更好的视频描述
+10. 对于图像生成，详细的提示词会产生更好的结果
 
 ## 常见问题
 
